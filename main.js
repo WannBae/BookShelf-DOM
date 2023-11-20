@@ -7,13 +7,13 @@ function generateId() {
   return +new Date();
 }
 
-function generateBookObject(id, title, author, year, isCompleted) {
-  return { id, title, author, year, isCompleted };
+function generateBookObject(id, title, author, year, isComplete) {
+  return { id, title, author, year, isComplete };
 }
 
 function isStorageExist() {
-  if (typeof Storage === undefined) {
-    alert("browser does not support storage");
+  if (typeof Storage === "undefined") {
+    alert("Browser does not support storage");
     return false;
   }
   return true;
@@ -49,7 +49,7 @@ function findBookIndex(bookId) {
 
 // fungsi membuat book
 function makeBookList(bookObject) {
-  const { id, title, author, year, isCompleted } = bookObject;
+  const { id, title, author, year, IsComplete } = bookObject;
 
   const textTitle = document.createElement("h3");
   textTitle.innerText = bookObject.title;
@@ -64,7 +64,7 @@ function makeBookList(bookObject) {
   container.classList.add("book_item");
   container.append(textTitle, textAuthor, textYear);
 
-  if (isCompleted) {
+  if (IsComplete) {
     // Tombol selesai
     const unCompleteButton = document.createElement("button");
     unCompleteButton.classList.add("green");
@@ -113,7 +113,7 @@ function makeBookList(bookObject) {
 }
 
 // function makeBookList(bookObject) {
-//   const { id, title, author, year, isCompleted } = bookObject;
+//   const { id, title, author, year, IsComplete } = bookObject;
 
 //   const textTitle = document.createElement("h3");
 //   textTitle.innerText = bookObject.title;
@@ -135,7 +135,7 @@ function makeBookList(bookObject) {
 //   const actionContainer = document.createElement("div"); // Tambahkan container baru untuk tombol
 //   actionContainer.classList.add("action");
 
-//   if (isCompleted) {
+//   if (IsComplete) {
 //     // Tombol selesai
 //     const unCompleteButton = document.createElement("button");
 //     unCompleteButton.classList.add("green");
@@ -183,16 +183,17 @@ function addBook() {
   const textTitle = document.getElementById("inputBookTitle").value;
   const textAuthor = document.getElementById("inputBookAuthor").value;
   const textYear = document.getElementById("inputBookYear").value;
-  const isCompleted = document.getElementById("inputBookIsComplete").checked;
+  const isComplete = document.getElementById("inputBookIsComplete").checked;
 
   const generatedID = generateId();
+  const year = parseInt(textYear, 10);
 
   const bookObject = generateBookObject(
     generatedID,
     textTitle,
     textAuthor,
-    textYear,
-    isCompleted
+    year,
+    isComplete
   );
   books.push(bookObject);
 
@@ -205,7 +206,7 @@ function addBookCompleted(bookId) {
   const bookTarget = findBook(bookId);
 
   if (bookTarget === null) return;
-  bookTarget.isCompleted = true;
+  bookTarget.IsComplete = true;
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
 }
@@ -225,7 +226,7 @@ function undoBookFromCompleted(bookId) {
   const bookTarget = findBook(bookId);
 
   if (bookTarget === null) return;
-  bookTarget.isCompleted = false;
+  bookTarget.IsComplete = false;
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
 }
@@ -266,7 +267,7 @@ document.addEventListener(RENDER_EVENT, function () {
 
   for (const bookItem of books) {
     const bookElement = makeBookList(bookItem);
-    if (bookItem.isCompleted) {
+    if (bookItem.isComplete) {
       completedBook.append(bookElement);
     } else {
       uncompleted.append(bookElement);
