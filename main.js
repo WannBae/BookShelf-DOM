@@ -7,13 +7,13 @@ function generateId() {
   return +new Date();
 }
 
-function generateBookObject(id, title, author, year, isComplete) {
-  return { id, title, author, year, isComplete };
+function generateBookObject(id, title, author, year, IsComplete) {
+  return { id, title, author, year, IsComplete };
 }
 
 function isStorageExist() {
-  if (typeof Storage === "undefined") {
-    alert("Browser does not support storage");
+  if (typeof Storage === undefined) {
+    alert("browser does not support storage");
     return false;
   }
   return true;
@@ -112,73 +112,7 @@ function makeBookList(bookObject) {
   return container;
 }
 
-// function makeBookList(bookObject) {
-//   const { id, title, author, year, IsComplete } = bookObject;
-
-//   const textTitle = document.createElement("h3");
-//   textTitle.innerText = bookObject.title;
-
-//   const textAuthor = document.createElement("p");
-//   textAuthor.innerText = bookObject.author;
-
-//   const textYear = document.createElement("p");
-//   textYear.innerText = bookObject.year;
-
-//   const textContainer = document.createElement("div");
-//   textContainer.classList.add("action");
-//   textContainer.append(textTitle, textAuthor, textYear);
-
-//   const container = document.createElement("div");
-//   container.classList.add("book_item");
-//   container.append(textContainer);
-
-//   const actionContainer = document.createElement("div"); // Tambahkan container baru untuk tombol
-//   actionContainer.classList.add("action");
-
-//   if (IsComplete) {
-//     // Tombol selesai
-//     const unCompleteButton = document.createElement("button");
-//     unCompleteButton.classList.add("green");
-//     unCompleteButton.innerText = "Belum selesai di Baca";
-//     unCompleteButton.addEventListener("click", function () {
-//       undoBookFromCompleted(bookObject.id);
-//     });
-
-//     // Tombol hapus
-//     const deleteButton = document.createElement("button");
-//     deleteButton.classList.add("red");
-//     deleteButton.innerText = "Hapus buku";
-//     deleteButton.addEventListener("click", function () {
-//       removeBook(bookObject.id);
-//     });
-
-//     actionContainer.append(unCompleteButton, deleteButton);
-//   } else {
-//     // tombol selesai
-//     const completeButton = document.createElement("button");
-//     completeButton.classList.add("green");
-//     completeButton.innerText = "Selesai Dibaca";
-//     completeButton.addEventListener("click", function () {
-//       addBookCompleted(bookObject.id);
-//     });
-//     // tombol hapus
-//     const deleteButton = document.createElement("button");
-//     deleteButton.classList.add("red");
-//     deleteButton.innerText = "Hapus buku";
-//     deleteButton.addEventListener("click", function () {
-//       removeBook(bookObject.id);
-//     });
-
-//     actionContainer.append(completeButton, deleteButton);
-//   }
-
-//   container.append(actionContainer); // Tambahkan container tombol ke dalam container utama
-
-//   return container;
-// }
-
 // fungsi menambahkan buku
-
 function addBook() {
   const textTitle = document.getElementById("inputBookTitle").value;
   const textAuthor = document.getElementById("inputBookAuthor").value;
@@ -186,19 +120,34 @@ function addBook() {
   const isComplete = document.getElementById("inputBookIsComplete").checked;
 
   const generatedID = generateId();
-  const year = parseInt(textYear, 10);
 
   const bookObject = generateBookObject(
     generatedID,
     textTitle,
     textAuthor,
-    year,
+    textYear,
     isComplete
   );
-  books.push(bookObject);
+
+  if (isComplete) {
+    moveBookToCompleted(bookObject);
+  } else {
+    moveBookToIncomplete(bookObject);
+  }
 
   document.dispatchEvent(new Event(RENDER_EVENT));
   saveData();
+}
+
+//new function moved book
+function moveBookToCompleted(bookObject) {
+  bookObject.IsComplete = true;
+  books.push(bookObject);
+}
+
+function moveBookToIncomplete(bookObject) {
+  bookObject.IsComplete = false;
+  books.push(bookObject);
 }
 
 // fungsi tombol selesai
@@ -267,7 +216,7 @@ document.addEventListener(RENDER_EVENT, function () {
 
   for (const bookItem of books) {
     const bookElement = makeBookList(bookItem);
-    if (bookItem.isComplete) {
+    if (bookItem.IsComplete) {
       completedBook.append(bookElement);
     } else {
       uncompleted.append(bookElement);
